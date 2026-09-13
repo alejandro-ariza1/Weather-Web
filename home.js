@@ -8,17 +8,32 @@ const extratemp = document.getElementById("extraTemp");
 const recommendation = document.getElementById("recommendation");
 const rainRecommendation = document.getElementById("rainRecommendation");
 
+let realPlace = false;
+
 async function btnClicked(){
     let cityInputted = city.value;
+
+    if (cityInputted === "") {
+        removeInfo();
+        cityName.textContent = "Please enter a city";
+        return;
+    }
+
     let cityCapitalised = cityInputted.charAt(0).toUpperCase() + cityInputted.slice(1);
     
     const data = await getWeather(cityCapitalised);
+    if (!data) {
+        removeInfo();
+        cityName.textContent = "The place you entered does NOT exist. Try again";
+        return;
+    }
+
     const rain = await getForecast(cityCapitalised);
     const rainChance = rain.list[0].pop * 100;
     const text = await recommend(data, rainChance);
 
     const rainText = rainRecommend(rainChance);
-    const emojiIcon = getEmoji(data);
+    const emojiIcon = getEmoji(data, rainChance);
 
     displayInfo(data, cityCapitalised, text, rain, emojiIcon, rainText);
 }
@@ -29,10 +44,18 @@ weatherBtn.addEventListener("click", btnClicked);
 async function getWeather(cityCapitalised) {
     try{
         const response = await fetch ("https://api.openweathermap.org/data/2.5/weather?q=" + cityCapitalised + "&units=metric&appid=d5c4b39691595893eaf261c857070d43");
+        
+        if(!response.ok){
+            return null;
+        }
+
         const data = await response.json();
+        realPlace = true;
         return data;
+
     } catch (error){
         console.error("Something went wrong:", error)
+        realPlace = false;
     }
 }
 
@@ -83,7 +106,7 @@ function getEmoji(data, rainChance){
     }
     
     if(data.main.temp<=9){
-    emojiIcon = "❄️"
+        emojiIcon = "❄️"
     }
     else if(data.main.temp<=14){
         emojiIcon = "💨"
@@ -107,13 +130,21 @@ function displayInfo(data, cityCapitalised, text, rain, emojiIcon, rainText){
     temp.textContent = `${Math.round(data.main.temp)}°C`;
 
     extratemp.innerHTML = `
-    <span class="high-low">H:</span>${Math.round(data.main.temp_max)}°C
-    <span class="high-low">L:</span>${Math.round(data.main.temp_min)}°C
-    ${rainChance}% of rain
+        <span class="high-low">H:</span>${Math.round(data.main.temp_max)}°C
+        <span class="high-low">L:</span>${Math.round(data.main.temp_min)}°C
+        ${rainChance}% of rain
     `;
 
     recommendation.textContent = text;
     rainRecommendation.textContent = rainText;
-    return rainChance;
+}
+
+function removeInfo(){
+    cityName.textContent = "";
+    emoji.textContent = "";
+    temp.textContent = "";
+    extratemp.innerHTML = "";
+    recommendation.textContent = "";
+    rainRecommendation.textContent = "";
 }
 //GIT.IGNORE AND DISPLAY ERROR MESSAGE THAT INPUT IS NOT VALID
