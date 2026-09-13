@@ -18,7 +18,7 @@ JavaScript
 Weather API
 Responsive Web Design
 
-🚀 Getting Started
+Getting Started
 1. Clone the repository
 git clone https://github.com/alejandro-ariza1/Weather-Web.git
 
