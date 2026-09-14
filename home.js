@@ -43,7 +43,7 @@ weatherBtn.addEventListener("click", btnClicked);
 
 async function getWeather(cityCapitalised) {
     try{
-        const response = await fetch ("https://api.openweathermap.org/data/2.5/weather?q=" + cityCapitalised + "&units=metric&appid=d5c4b39691595893eaf261c857070d43");
+        const response = await fetch ("https://api.openweathermap.org/data/2.5/weather?q=" + cityCapitalised + "&units=metric&appid=" + API_KEY);
         
         if(!response.ok){
             return null;
@@ -61,7 +61,7 @@ async function getWeather(cityCapitalised) {
 
 async function getForecast(cityCapitalised) {
     try{
-        const response = await fetch ("https://api.openweathermap.org/data/2.5/forecast?q=" + cityCapitalised + "&units=metric&appid=d5c4b39691595893eaf261c857070d43");
+        const response = await fetch ("https://api.openweathermap.org/data/2.5/forecast?q=" + cityCapitalised + "&units=metric&appid=" + API_KEY);
         const rain = await response.json();
         return rain;
     } catch (error){
@@ -147,4 +147,3 @@ function removeInfo(){
     recommendation.textContent = "";
     rainRecommendation.textContent = "";
 }
-//GIT.IGNORE AND DISPLAY ERROR MESSAGE THAT INPUT IS NOT VALID
